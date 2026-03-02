@@ -1,4 +1,5 @@
 #include "DebugDraw.h"
+#include<iostream>
 
 #include <vector>
 #include <glad/glad.h>
@@ -28,7 +29,7 @@ namespace DebugDraw
         glBindVertexArray(s_VAO);
 
         glBindBuffer(GL_ARRAY_BUFFER, s_VBO);
-        glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
 
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(DebugVertex), (void*)0);
@@ -78,6 +79,15 @@ namespace DebugDraw
         glAttachShader(s_Shader, fs);
         glLinkProgram(s_Shader);
 
+        GLint success;                                             //Linking Error Checker
+        glGetProgramiv(s_Shader, GL_LINK_STATUS, &success);
+        if (!success)
+        {
+            char info[512];
+            glGetProgramInfoLog(s_Shader, 512, nullptr, info);
+            std::cout << "Shader Link Error:\n" << info << std::endl;
+        }
+
         glDeleteShader(vs);
         glDeleteShader(fs);
 
@@ -102,7 +112,7 @@ namespace DebugDraw
 
         glUseProgram(s_Shader);
 
-        glUniformMatrix4fv(glGetUniformLocation(s_Shader, "u_viewProj"), 1, GL_FALSE, glm::value_ptr(viewProj));
+        glUniformMatrix4fv(glGetUniformLocation(s_Shader, "u_ViewProj"), 1, GL_FALSE, glm::value_ptr(viewProj));
 
         glBindVertexArray(s_VAO);
         glBindBuffer(GL_ARRAY_BUFFER, s_VBO);
@@ -119,5 +129,10 @@ namespace DebugDraw
         const glm::vec3& start,
         const glm::vec3& end,
         const glm::vec3& color) {
+
+        s_Vertices.push_back({ start, color });
+        s_Vertices.push_back({ end, color });
+
+
     }
 }

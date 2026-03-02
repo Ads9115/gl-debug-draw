@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "DebugDraw.h"
-
+#include <glm/glm.hpp>
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
@@ -41,19 +41,34 @@ int main()
         return -1;
     }
 
+    DebugDraw::Init();
    
     glViewport(0, 0, 800, 600);
 
   
+    glm::mat4 viewProj = glm::mat4(1.0f);
+
     while (!glfwWindowShouldClose(window))
     {
         
-        glClearColor(0.1f, 0.15f, 0.2f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        DebugDraw::BeginFrame();
+        DebugDraw::DrawLine(
+            { -0.5f, 0.0f, 0.0f },
+            { 0.5f, 0.0f, 0.0f },
+            { 1.0f, 0.0f, 0.0f }
+        );
+
+        DebugDraw::EndFrame(viewProj);
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    DebugDraw::Shutdown();
 
     glfwTerminate();
     return 0;
