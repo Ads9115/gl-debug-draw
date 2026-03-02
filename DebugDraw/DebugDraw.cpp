@@ -83,9 +83,23 @@ namespace DebugDraw
 
     
     }
-    void Shutdown() {}
-    void BeginFrame() {}
-    void EndFrame(const glm::mat4& viewProj) {}
+    void Shutdown() {
+    
+        glDeleteBuffers(1, &s_VBO);
+        glDeleteVertexArrays(1, &s_VAO);
+        glDeleteProgram(s_Shader);
+
+    }
+    void BeginFrame() {
+        
+        s_Vertices.clear();
+    
+    }
+    void EndFrame(const glm::mat4& viewProj) {
+
+
+    
+    }
     void DrawLine(
         const glm::vec3& start,
         const glm::vec3& end,
