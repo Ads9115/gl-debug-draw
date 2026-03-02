@@ -1,10 +1,88 @@
 #include "DebugDraw.h"
-#include <glm/glm.hpp>
 
+#include <vector>
+#include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
+
+
+struct DebugVertex {
+
+    glm::vec3 position;
+    glm::vec3 color;
+
+};
 
 namespace DebugDraw
 {
-    void Init() {}
+    static std::vector<DebugVertex> s_Vertices;
+
+    static GLuint s_VAO = 0;
+    static GLuint s_VBO = 0;
+    static GLuint s_Shader = 0;
+
+    void Init() {
+
+        glGenVertexArrays(1, &s_VAO);
+        glGenBuffers(1, &s_VBO);
+
+        glBindVertexArray(s_VAO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, s_VBO);
+        glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(DebugVertex), (void*)0);
+
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(DebugVertex), (void*)offsetof(DebugVertex, color));
+        
+        glBindVertexArray(0);
+
+        const char* vertexSrc = R"(
+        #version 330 core
+        layout(location = 0) in vec3 aPos;
+        layout(location = 1) in vec3 aColor;
+
+        uniform mat4 u_ViewProj;
+
+        out vec3 vColor;
+
+        void main()
+        {
+            vColor = aColor;
+            gl_Position = u_ViewProj * vec4(aPos, 1.0);
+        }
+        )";
+
+        const char* fragmentSrc = R"(
+        #version 330 core
+        in vec3 vColor;
+        out vec4 FragColor;
+
+        void main()
+        {
+            FragColor = vec4(vColor, 1.0);
+        }
+        )";
+
+        GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vs, 1, &vertexSrc, nullptr);
+        glCompileShader(vs);
+
+        GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fs, 1, &fragmentSrc, nullptr);
+        glCompileShader(fs);
+
+        s_Shader = glCreateProgram();
+        glAttachShader(s_Shader, vs);
+        glAttachShader(s_Shader, fs);
+        glLinkProgram(s_Shader);
+
+        glDeleteShader(vs);
+        glDeleteShader(fs);
+
+    
+    }
     void Shutdown() {}
     void BeginFrame() {}
     void EndFrame(const glm::mat4& viewProj) {}
