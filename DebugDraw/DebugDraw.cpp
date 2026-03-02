@@ -97,6 +97,21 @@ namespace DebugDraw
     }
     void EndFrame(const glm::mat4& viewProj) {
 
+        if (s_Vertices.empty())
+            return;
+
+        glUseProgram(s_Shader);
+
+        glUniformMatrix4fv(glGetUniformLocation(s_Shader, "u_viewProj"), 1, GL_FALSE, glm::value_ptr(viewProj));
+
+        glBindVertexArray(s_VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, s_VBO);
+
+        glBufferData(GL_ARRAY_BUFFER, s_Vertices.size() * sizeof(DebugVertex),s_Vertices.data(), GL_DYNAMIC_DRAW);
+        glDrawArrays(GL_LINES, 0, (GLsizei)s_Vertices.size());
+
+        glBindVertexArray(0);
+
 
     
     }
