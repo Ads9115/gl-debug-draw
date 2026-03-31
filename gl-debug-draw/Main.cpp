@@ -3,6 +3,8 @@
 #include <iostream>
 #include "DebugDraw.h"
 #include <glm/glm.hpp>
+
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
@@ -23,7 +25,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     
-    GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL 3.3 Test", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "GL Debug Draw", nullptr, nullptr);
     if (!window)
     {
         std::cout << "Failed to create window\n";
@@ -59,6 +61,12 @@ int main()
             { -0.5f, 0.0f, 0.0f },
             { 0.5f, 0.0f, 0.0f },
             { 1.0f, 0.0f, 0.0f }
+        );
+
+        DebugDraw::DrawLine(
+            { 0.0f, -0.5f, 0.0f },
+            { 0.0f,  0.5f, 0.0f },
+            { 0.0f, 1.0f, 0.0f }
         );
 
         DebugDraw::EndFrame(viewProj);
